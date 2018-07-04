@@ -31,5 +31,6 @@ def query_emp_empno_ename_order_by_hiredate():
     for item in emps:
         print(item.empno, item.ename, item.job, item.hiredate)
 
+
 if __name__ == '__main__':
     query_emp_empno_ename_order_by_hiredate()
