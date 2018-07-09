@@ -1,3 +1,6 @@
+from sqlalchemy import case, func
+from sqlalchemy.sql import label
+
 from models import *
 
 
@@ -170,5 +173,168 @@ def query_and_group_plus():
     '''
 
 
+# case when的语法
+def query_case_when():
+    # 使用case when的情况很少. 因为 case when就算在sql语句里, 写的也很笨重. 所以, 很少使用.
+    # 能够替换case when的 语句可能有 mysql里的 ifnull( a,b ) oracle里的 nvl, nvl2等等.
+    # ifnull(a, b)意思是, 如果a是空的, 那么使用b的值, if(a, b, c) 意思是 如果a是true, 那么使用b, 否则使用c, 是三目运算符.
+    # 如何使用 ifnull, if 等函数,分别使用 func.ifnull, func.IF(大写), 使用我上面说的 func.函数名 用法. 这里就不多说了.
+    # 假设一个场景:
+    #    我们根据员工的收入分等级, 奖金+工资 1500 美元以下的,都是低收入, 1500-3500之前的是 中等收入, 3500美元以上的是高收入
+    #    包含下限, 不包含上限.
+    from sqlalchemy import text
+    income_level = case(
+        [
+            (text('(emp.sal + ifnull(emp.comm,0))<1500'), 'LOW_INCOME'),
+            (text('1500<=(emp.sal + ifnull(emp.comm,0))<3500'), 'MIDDLE_INCOME'),
+            (text('(emp.sal + ifnull(emp.comm,0))>=3500'), 'HIGH_INCOME'),
+        ], else_='UNKNOWN'
+    ).label('income_level')
+    emps = sess.query(Emp.ename, label('income', Emp.sal + func.ifnull(Emp.comm, 0)),
+                      income_level).all()
+    for item in emps:
+        print(item.ename, item.income, item.income_level)
+
+    '''
+    output:
+    
+    SMITH 2799.00 MIDDLE_INCOME
+    ALLEN 1900.00 MIDDLE_INCOME
+    WARD 1750.00 MIDDLE_INCOME
+    JONES 2975.00 MIDDLE_INCOME
+    MARTIN 2650.00 MIDDLE_INCOME
+    BLAKE 2850.00 MIDDLE_INCOME
+    CLARK 2450.00 MIDDLE_INCOME
+    SCOTT 3000.00 MIDDLE_INCOME
+    KING 5000.00 MIDDLE_INCOME
+    TURNER 1500.00 MIDDLE_INCOME
+    ADAMS 1100.00 LOW_INCOME
+    JAMES 950.00 LOW_INCOME
+    FORD 3000.00 MIDDLE_INCOME
+    MILLER 1300.00 LOW_INCOME
+    KATE None UNKNOWN
+    
+    
+    note:
+    
+    case when真的好麻烦, 我已经不想多说了, 写的我好累. ￣□￣｜｜....
+        
+    '''
+
+
+def query_with_exists():
+    # exists 到底怎么用? 我很纠结要不要写这个.
+    # 其实我的 exists 语句也写的很少.
+    # 想要深刻理解 exists 语句, 请参见 https://www.cnblogs.com/mytechblog/articles/2105785.html
+    # exists 可以类比于 in, 但是比 in的效率更好. 如果暂时没法理解 exits, 把exits 理解为in 也没关系, 慢慢就理解了.
+    # 本例的场景:
+    #       找出各个职位工资最高的员工!! 是不是很有挑战性.
+    #       我们先想一下sql怎么写.
+    # select *
+    # from emp
+    #   join (select
+    #           job,
+    #           max(sal) max_sal
+    #         from emp
+    #         group by job) j on emp.job = j.job and emp.sal = j.max_sal
+    # order by emp.sal asc;
+    # 但是如果用exists 写呢?
+    #
+    # select *
+    # from emp e
+    # where not exists(
+    #     select *
+    #     from emp e2
+    #     where e2.job = e.job and e.sal < e2.sal and e.sal is not null
+    # )
+    # order by e.sal asc;
+    # 读这个肯定很难吧,刚开始. 那么就作为一个难题留给亲爱的读者吧.
+    # 我们 exits 实现这个语句.
+    from sqlalchemy import exists
+    from sqlalchemy.orm import aliased
+    e2 = aliased(Emp)
+    from sqlalchemy import and_
+    stmt = exists().where(and_(e2.job == Emp.job, Emp.sal < e2.sal))
+    emps = sess.query(Emp).filter(~stmt).filter(Emp.sal!=None).order_by(Emp.sal.asc()).all()
+    for item in emps:
+        print(item.ename, item.job, item.sal)
+    '''
+    output:
+    
+    MILLER CLERK 1300.00
+    ALLEN SALESMAN 1600.00
+    JONES MANAGER 2975.00
+    SCOTT ANALYST 3000.00
+    FORD ANALYST 3000.00
+    KING PRESIDENT 5000.00
+    
+    
+    note:
+    
+    我本来是很熟悉sql的, 一下子转到orm的写法, 一度非常的痛苦. 还好半年内慢慢适应过来了. 查了很多资料, 写了很多CRUD.
+    我为orm浪费了很多时间, 为了写出所谓漂亮的代码.
+    我的建议是: 这些并不是那么重要, 不值得投入过多时间去钻研. 能找到替代的就用替代的写法去实现.
+    '''
+
+
+def query_with_union():
+    query1 = sess.query(Emp.ename, Emp.job, Emp.deptno).filter(Emp.deptno == 10)
+    query2 = sess.query(Emp.ename, Emp.job, Emp.deptno).filter(Emp.deptno.in_((10, 20)))  # Emp.deptno in (10, 20) 注意, 这种写法是错的!!
+    query = query1.union(query2)
+    result = query.order_by(Emp.ename).all()
+    for item in result:
+        print(item.ename, item.job, item.deptno)
+    '''
+    output:
+    
+    ADAMS CLERK 20
+    CLARK MANAGER 10
+    FORD ANALYST 20
+    JONES MANAGER 20
+    KING PRESIDENT 10
+    MILLER CLERK 10
+    SCOTT ANALYST 20
+    SMITH CLERK 20
+    
+    
+    note:
+    
+    我们可以看到, 没有重复数据. 进行了去重操作.
+    
+    '''
+
+
+def query_union_all():
+    query1 = sess.query(Emp.ename, Emp.job, Emp.deptno).filter(Emp.deptno == 10)
+    query2 = sess.query(Emp.ename, Emp.job, Emp.deptno).filter(
+        Emp.deptno.in_((10, 20)))  # Emp.deptno in (10, 20) 注意, 这种写法是错的!!
+    query = query1.union_all(query2).order_by(Emp.ename)
+    result = query.all()
+    for item in result:
+        print(item.ename, item.job, item.deptno)
+    '''
+    output:
+    
+    ADAMS CLERK 20
+    CLARK MANAGER 10
+    CLARK MANAGER 10
+    FORD ANALYST 20
+    JONES MANAGER 20
+    KING PRESIDENT 10
+    KING PRESIDENT 10
+    MILLER CLERK 10
+    MILLER CLERK 10
+    SCOTT ANALYST 20
+    SMITH CLERK 20
+    
+    
+    note:
+    
+    有重复数据. 
+    注意了! mysql没有interset操作, 也就是相减操作, 想要实现相减, 需要借助 not exists, 所以, 如果还是需要了解一下 exits的用法.
+    写在最后: exists难度偏大, 是选学内容. 
+    '''
+
+
 if __name__ == '__main__':
-    query_and_group_plus()
+    query_with_union()

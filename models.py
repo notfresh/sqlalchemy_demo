@@ -26,6 +26,7 @@ class Emp(Base):
     job = Column(String(9))
     mgr = Column(Integer)
     hiredate = Column(Date)
+    sal = Column(DECIMAL(7, 2))
     comm = Column(DECIMAL(7, 2))
     deptno = Column(Integer, ForeignKey('dept.deptno'))
 
@@ -35,5 +36,6 @@ class Emp(Base):
             'ename': self.ename,
             'job': self.job,
             'deptno': self.deptno,
+            'sal': self.sal,
             'comm': self.comm
         })
