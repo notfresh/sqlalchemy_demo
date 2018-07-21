@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-engine = create_engine('mysql+pymysql://root:Dev@123@localhost:3306/sqlalchemy_demo?charset=utf8', echo=True)
+engine = create_engine('mysql+pymysql://root:111111@localhost:3306/sqlalchemy_demo?charset=utf8', echo=True)
 
 Session = sessionmaker(bind=engine)
 

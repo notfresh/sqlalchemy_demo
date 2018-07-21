@@ -1,93 +1,119 @@
 -- 部门 表
 -- Create table
-create table DEPT
-(
-deptno int(2) not null,
-dname varchar(14),
-loc varchar(13)
-)
-;
--- Create/Recreate primary, unique and foreign key constraints
-alter table DEPT
-add constraint PK_DEPT primary key (DEPTNO);
+-- 部门 表
+-- Create table
+CREATE TABLE DEPT (
+	deptno int(2) NOT NULL,
+	dname varchar(14),
+	loc varchar(13)
+);-- Create/Recreate primary, unique and foreign key constraints
 
-insert into dept (DEPTNO, DNAME, LOC)
-values (10, 'ACCOUNTING', 'NEW YORK');
+ALTER TABLE DEPT
+	ADD CONSTRAINT PK_DEPT PRIMARY KEY (DEPTNO);
 
-insert into dept (DEPTNO, DNAME, LOC)
-values (20, 'RESEARCH', 'DALLAS');
+INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+VALUES (10, 'ACCOUNTING', 'NEW YORK');
 
-insert into dept (DEPTNO, DNAME, LOC)
-values (30, 'SALES', 'CHICAGO');
+INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+VALUES (20, 'RESEARCH', 'DALLAS');
 
-insert into dept (DEPTNO, DNAME, LOC)
-values (40, 'OPERATIONS', 'BOSTON');
+INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+VALUES (30, 'SALES', 'CHICAGO');
+
+INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+VALUES (40, 'OPERATIONS', 'BOSTON');
 
 -- 员工表
-create table EMP
-(
-empno int(4) not null,
-ename varchar(10),
-job varchar(9),
-mgr int(4),
-hiredate DATE,
-sal DECIMAL(7,2),
-comm DECIMAL(7,2),
-deptno int(2),
-desc2 varchar(30) default 2
-)
-;
--- Create/Recreate primary, unique and foreign key constraints
-alter table EMP
-add constraint PK_EMP primary key (EMPNO);
-alter table EMP
-add constraint FK_DEPTNO foreign key (DEPTNO)
-references DEPT (DEPTNO);
+-- 员工表
+CREATE TABLE EMP (
+	empno int(4) NOT NULL,
+	ename varchar(10),
+	job varchar(9),
+	mgr int(4),
+	hiredate DATE,
+	sal DECIMAL(7, 2),
+	comm DECIMAL(7, 2),
+	deptno int(2),
+	desc2 varchar(30) DEFAULT 2
+);-- Create/Recreate primary, unique and foreign key constraints
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7369, 'SMITH', 'CLERK', 7902, str_to_date('17-12-1980', '%d-%m-%Y'), 800.00, 1999.00, 20, null);
+ALTER TABLE EMP
+	ADD CONSTRAINT PK_EMP PRIMARY KEY (EMPNO);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7499, 'ALLEN', 'SALESMAN', 7698, str_to_date('20-02-1981', '%d-%m-%Y'), 1600.00, 300.00, 30, null);
+ALTER TABLE EMP
+	ADD CONSTRAINT FK_DEPTNO FOREIGN KEY (DEPTNO) REFERENCES DEPT (DEPTNO);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7521, 'WARD', 'SALESMAN', 7698, str_to_date('22-02-1981', '%d-%m-%Y'), 1250.00, 500.00, 30, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7369, 'SMITH', 'CLERK', 7902, str_to_date('17-12-1980', '%d-%m-%Y')
+	, 800.00, 1999.00, 20, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7566, 'JONES', 'MANAGER', 7839, str_to_date('02-04-1981', '%d-%m-%Y'), 2975.00, null, 20, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7499, 'ALLEN', 'SALESMAN', 7698, str_to_date('20-02-1981', '%d-%m-%Y')
+	, 1600.00, 300.00, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7654, 'MARTIN', 'SALESMAN', 7698, str_to_date('28-09-1981', '%d-%m-%Y'), 1250.00, 1400.00, 30, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7521, 'WARD', 'SALESMAN', 7698, str_to_date('22-02-1981', '%d-%m-%Y')
+	, 1250.00, 500.00, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7698, 'BLAKE', 'MANAGER', 7839, str_to_date('01-05-1981', '%d-%m-%Y'), 2850.00, null, 30, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7566, 'JONES', 'MANAGER', 7839, str_to_date('02-04-1981', '%d-%m-%Y')
+	, 2975.00, NULL, 20, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7782, 'CLARK', 'MANAGER', 7839, str_to_date('09-06-1981', '%d-%m-%Y'), 2450.00, null, 10, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7654, 'MARTIN', 'SALESMAN', 7698, str_to_date('28-09-1981', '%d-%m-%Y')
+	, 1250.00, 1400.00, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7788, 'SCOTT', 'ANALYST', 7566, str_to_date('19-04-1987', '%d-%m-%Y'), 3000.00, null, 20, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7698, 'BLAKE', 'MANAGER', 7839, str_to_date('01-05-1981', '%d-%m-%Y')
+	, 2850.00, NULL, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7839, 'KING', 'PRESIDENT', null, str_to_date('17-11-1981', '%d-%m-%Y'), 5000.00, null, 10, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7782, 'CLARK', 'MANAGER', 7839, str_to_date('09-06-1981', '%d-%m-%Y')
+	, 2450.00, NULL, 10, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7844, 'TURNER', 'SALESMAN', 7698, str_to_date('08-09-1981', '%d-%m-%Y'), 1500.00, 0.00, 30, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7788, 'SCOTT', 'ANALYST', 7566, str_to_date('19-04-1987', '%d-%m-%Y')
+	, 3000.00, NULL, 20, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7876, 'ADAMS', 'CLERK', 7788, str_to_date('23-05-1987', '%d-%m-%Y'), 1100.00, null, 20, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7839, 'KING', 'PRESIDENT', NULL, str_to_date('17-11-1981', '%d-%m-%Y')
+	, 5000.00, NULL, 10, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7900, 'JAMES', 'CLERK', 7698, str_to_date('03-12-1981', '%d-%m-%Y'), 950.00, null, 30, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7844, 'TURNER', 'SALESMAN', 7698, str_to_date('08-09-1981', '%d-%m-%Y')
+	, 1500.00, 0.00, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7902, 'FORD', 'ANALYST', 7566, str_to_date('03-12-1981', '%d-%m-%Y'), 3000.00, null, 20, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7876, 'ADAMS', 'CLERK', 7788, str_to_date('23-05-1987', '%d-%m-%Y')
+	, 1100.00, NULL, 20, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7934, 'MILLER', 'CLERK', 7782, str_to_date('23-01-1982', '%d-%m-%Y'), 1300.00, null, 10, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7900, 'JAMES', 'CLERK', 7698, str_to_date('03-12-1981', '%d-%m-%Y')
+	, 950.00, NULL, 30, NULL);
 
-insert into emp (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, DESC2)
-values (7935, 'KATE', 'MANAGER', null, null, null, null, null, null);
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7902, 'FORD', 'ANALYST', 7566, str_to_date('03-12-1981', '%d-%m-%Y')
+	, 3000.00, NULL, 20, NULL);
 
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7934, 'MILLER', 'CLERK', 7782, str_to_date('23-01-1982', '%d-%m-%Y')
+	, 1300.00, NULL, 10, NULL);
 
-
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE
+	, SAL, COMM, DEPTNO, DESC2)
+VALUES (7935, 'KATE', 'MANAGER', NULL, NULL
+	, NULL, NULL, NULL, NULL);
